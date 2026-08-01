@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Básico -->
+    <title>{% block title %}Imobiliária Manduri | Desde 1988{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}A imobiliária mais tradicional da cidade. Há mais de {{ anos_mercado }} anos realizando sonhos e fechando bons negócios na rua principal.{% endblock %}">
+    
+    <!-- Open Graph (WhatsApp, Facebook, etc) -->
+    <meta property="og:title" content="{% block og_title %}Imobiliária Manduri{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Tradição e confiança desde 1988.{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <!-- O WhatsApp exige URLs absolutas para a imagem (com http/https) -->
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo.png' %}{% endblock %}">
+    
+    <!-- Tailwind CSS CDN (Sem arquivos extras) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    
+    <!-- Header Simples (Exemplo) -->
+    <header class="bg-white shadow p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-900">Manduri</h1>
+            <nav class="space-x-4">
+                <a href="#" class="text-gray-600 hover:text-blue-900">Início</a>
+                <a href="#" class="text-gray-600 hover:text-blue-900">Imóveis</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo Dinâmico das outras páginas entrará aqui -->
+    <main class="flex-grow container mx-auto p-4 mt-6">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Simples -->
+    <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
+        <p>&copy; {% now "Y" %} Imobiliária Manduri. Desde 1988.</p>
+    </footer>
+
+</body>
+</html>

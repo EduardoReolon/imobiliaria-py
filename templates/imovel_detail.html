@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ property.address }} | Imobiliária Manduri{% endblock %}
+
+<!-- AQUI ESTÁ A SUBSTITUIÇÃO DA IMAGEM DO WHATSAPP/OG -->
+{% block og_image %}
+    {% if property.images.first %}
+        {{ request.scheme }}://{{ request.get_host }}{{ property.images.first.image.url }}
+    {% else %}
+        {{ block.super }} <!-- Se o imóvel não tiver foto, puxa a logo lá do base.html -->
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="bg-white p-6 rounded shadow">
+        <h1 class="text-3xl font-bold mb-2">{{ property.address }}</h1>
+        <p class="text-xl text-blue-800 font-semibold mb-4">R$ {{ property.price }}</p>
+        
+        <p class="text-gray-700">{{ property.brief_description }}</p>
+        
+        <!-- O resto do design nós montamos depois -->
+    </div>
+{% endblock %}
