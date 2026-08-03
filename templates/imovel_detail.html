@@ -5,6 +5,7 @@
 mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
 
 {% block title %}{{ property.address }} | Imobiliária Manduri{% endblock %}
+{% block og_title %}{{ property.address }} | Imobiliária Manduri{% endblock %}
 
 {% block og_image %}
 {% if property.images.first %}
