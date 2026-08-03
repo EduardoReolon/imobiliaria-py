@@ -38,10 +38,8 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
             <span class="text-orange-600 font-bold uppercase tracking-wider text-sm">{{ property.subcategory.name
                 }}</span>
             <h1 class="text-3xl font-bold text-amber-900 mb-2 mt-1">
-                {% if property.neighborhood and property.neighborhood != 'None' %}{{ property.neighborhood }} - {% endif
-                %}
-                {% if property.town and property.town != 'None' %}{{ property.town }}{% else %}Cidade não informada{%
-                endif %}
+                {% if property.neighborhood and property.neighborhood != 'None' %}{{ property.neighborhood }} - {% endif %}
+                {% if property.town and property.town != 'None' %}{{ property.town }}{% else %}Cidade não informada{% endif %}
             </h1>
             {% if property.address and property.address != 'None' %}
             <p class="text-gray-600">{{ property.address }}{% if property.number and property.number != 'None' %}, {{
