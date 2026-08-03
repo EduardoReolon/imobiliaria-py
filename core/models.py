@@ -4,6 +4,8 @@ import os
 from io import BytesIO
 from PIL import Image as PILImage
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+import builtins
 
 def get_image_filename(instance, filename):
     # Gera o nome no formato: {id_propriedade}_{hash_aleatorio}.webp
@@ -117,6 +119,47 @@ class Image(models.Model):
             self.image = ContentFile(output.read(), name='temp.webp')
 
         super().save(*args, **kwargs)
+    
+    @builtins.property
+    def thumb_url(self):
+        """
+        Retorna a URL da imagem otimizada (-thumb.webp).
+        Se ela não existir fisicamente no disco, cria na hora.
+        """
+        if not self.image:
+            return ""
+
+        original_path = self.image.name  # Ex: imoveis/foto1.webp
+        
+        # Separa o nome da extensão para injetar o "-thumb"
+        base_name, ext = os.path.splitext(original_path)
+        thumb_path = f"{base_name}-thumb{ext}"  # Ex: imoveis/foto1-thumb.webp
+
+        # 1. Verifica se a miniatura JÁ existe no sistema de arquivos
+        if not default_storage.exists(thumb_path):
+            try:
+                # 2. Se não existir, abre a original para processar
+                with default_storage.open(original_path, 'rb') as f:
+                    img = PILImage.open(f)
+                    
+                    # Redimensiona proporcionalmente para o tamanho de card (ex: max 600px de largura)
+                    if img.width > 600:
+                        output_size = (600, int((600 / img.width) * img.height))
+                        img = img.resize(output_size, PILImage.Resampling.LANCZOS)
+                    
+                    # Salva em memória
+                    output = BytesIO()
+                    img.save(output, format='WEBP', quality=75)  # 75 é excelente para thumbs
+                    output.seek(0)
+                    
+                    # 3. Grava o novo arquivo físico direto no disco
+                    default_storage.save(thumb_path, ContentFile(output.read()))
+            except Exception as e:
+                # Caso dê algum erro na leitura/escrita, retorna a original por segurança
+                return self.image.url
+
+        # 4. Retorna a URL pública do arquivo thumb gerado
+        return default_storage.url(thumb_path)
 
     def __str__(self):
         return f"Image for Property {self.property_id}"
