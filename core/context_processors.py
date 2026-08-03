@@ -6,5 +6,5 @@ def info_global(request):
     return {
         'anos_mercado': ano_atual - ano_fundacao,
         'mostrar_banner_oferta': True,
-        'whatsapp_numero': '5541000000000',
+        'whatsapp_numero': '554185151965',
     }

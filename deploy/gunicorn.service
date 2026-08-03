@@ -12,6 +12,7 @@ ExecStart=/home/ubuntu/imobiliaria-py/venv/bin/gunicorn \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
           imobiliaria.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target
