@@ -11,7 +11,7 @@ ExecStart=/home/ubuntu/imobiliaria-py/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
-          imobiliaria.wsgi:application
+          core.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
