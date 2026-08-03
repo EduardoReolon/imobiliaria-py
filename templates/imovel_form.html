@@ -49,8 +49,10 @@
                 </div>
 
                 <!-- Endereço -->
-                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Endereço</label>{{
-                    form.address }}</div>
+                <div class="col-span-full">
+    <label class="block text-sm font-bold text-gray-700 mb-1">Endereço</label>
+    {{ form.address }}
+</div>
                 <div><label class="block text-sm font-bold text-gray-700 mb-1">Número</label>{{ form.number }}</div>
                 <div><label class="block text-sm font-bold text-gray-700 mb-1">Complemento</label>{{ form.complement }}
                 </div>
@@ -71,10 +73,14 @@
                 <div><label class="block text-sm font-bold text-gray-700 mb-1">Banheiros</label>{{ form.bathrooms }}
                 </div>
                 <div><label class="block text-sm font-bold text-gray-700 mb-1">Vagas</label>{{ form.garage }}</div>
-                <div><label class="block text-sm font-bold text-gray-700 mb-1">Área Útil/Construída (m²)</label>{{
-                    form.area_facility }}</div>
-                <div><label class="block text-sm font-bold text-gray-700 mb-1">Área Terreno (m²)</label>{{
-                    form.area_land }}</div>
+                <div>
+    <label class="block text-sm font-bold text-gray-700 mb-1">Área Útil/Construída (m²)</label>
+    {{ form.area_facility }}
+</div>
+<div>
+    <label class="block text-sm font-bold text-gray-700 mb-1">Área Terreno (m²)</label>
+    {{ form.area_land }}
+</div>
                 <div class="col-span-full">
                     <label class="block text-sm font-bold text-gray-700 mb-1">ID do Vídeo no YouTube</label>
                     {{ form.youtube }}

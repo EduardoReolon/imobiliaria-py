@@ -35,8 +35,7 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
         <div>
-            <span class="text-orange-600 font-bold uppercase tracking-wider text-sm">{{ property.subcategory.name
-                }}</span>
+            <span class="text-orange-600 font-bold uppercase tracking-wider text-sm">{{ property.subcategory.name }}</span>
             <h1 class="text-3xl font-bold text-amber-900 mb-2 mt-1">
                 {% if property.neighborhood and property.neighborhood != 'None' %}{{ property.neighborhood }} - {% endif %}
                 {% if property.town and property.town != 'None' %}{{ property.town }}{% else %}Cidade não informada{% endif %}
@@ -200,27 +199,22 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
 
     <!-- Características -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 bg-gray-50 p-4 rounded-lg border">
-        {% if property.bedrooms > 0 %}
-        <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.bedrooms }}</span>
-            Quartos</div>
-        {% endif %}
-        {% if property.bathrooms > 0 %}
-        <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.bathrooms
-                }}</span> Banheiros</div>
-        {% endif %}
-        {% if property.garage > 0 %}
-        <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.garage }}</span>
-            Vagas</div>
-        {% endif %}
-        {% if property.area_facility > 0 %}
-        <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.area_facility
-                }}</span> m² Útil</div>
-        {% endif %}
-        {% if property.area_land > 0 %}
-        <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.area_land
-                }}</span> m² Terreno</div>
-        {% endif %}
-    </div>
+    {% if property.bedrooms > 0 %}
+    <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.bedrooms }}</span> Quartos</div>
+    {% endif %}
+    {% if property.bathrooms > 0 %}
+    <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.bathrooms }}</span> Banheiros</div>
+    {% endif %}
+    {% if property.garage > 0 %}
+    <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.garage }}</span> Vagas</div>
+    {% endif %}
+    {% if property.area_facility > 0 %}
+    <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.area_facility }}</span> m² Útil</div>
+    {% endif %}
+    {% if property.area_land > 0 %}
+    <div class="flex items-center text-gray-700"><span class="font-bold text-lg mr-2">{{ property.area_land }}</span> m² Terreno</div>
+    {% endif %}
+</div>
 
     <!-- Descrição -->
     {% if property.description and property.description != 'None' %}
