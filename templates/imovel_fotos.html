@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    /* Esconde o botão 'Principal' automaticamente na primeira foto */
+    .foto-item:first-child .btn-principal {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Gerenciar Fotos - {{ property.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mb-12">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-amber-900">Fotos do Imóvel #{{ property.id }}</h1>
+        <a href="{% url 'imovel_edit' property.id %}"
+            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Voltar ao Imóvel
+        </a>
+    </div>
+
+    <!-- Área de Drag and Drop -->
+    <div id="dropzone"
+        class="border-4 border-dashed border-gray-300 rounded-lg p-12 text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer relative">
+        <input type="file" id="fileInput" multiple accept="image/*"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+        </svg>
+        <p class="text-lg font-bold text-gray-700">Arraste as fotos para cá</p>
+        <p class="text-sm text-gray-500 mt-1">ou clique para selecionar (pode escolher várias)</p>
+
+        <!-- Feedback de carregamento -->
+        <div id="uploadStatus" class="hidden mt-4 text-orange-600 font-bold">
+            Enviando fotos, aguarde...
+        </div>
+    </div>
+
+    <!-- Galeria de Fotos Atuais -->
+    <div class="mt-12">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Fotos Salvas ({{ property.images.count }})</h2>
+        <div id="galeria-fotos" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {% for img in property.images.all %}
+            <div class="relative group bg-gray-100 rounded shadow foto-item" data-id="{{ img.id|stringformat:'d' }}">
+                <img src="{{ img.image.url }}" class="w-full h-32 object-cover rounded-t">
+
+                <!-- Botão de Excluir (X) - Agora passa apenas o 'this' -->
+                <button onclick="excluirFoto(this)"
+                    class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow hover:bg-red-700">
+                    X
+                </button>
+
+                <button onclick="tornarPrincipal(this)" class="btn-principal absolute top-1 left-1 bg-yellow-500 text-white rounded px-2 py-1 text-xs font-bold shadow hover:bg-yellow-600">
+                    ★ Capa
+                </button>
+
+                <!-- Controle de Ordem -->
+                <div class="flex justify-between items-center bg-gray-800 text-white p-2 rounded-b">
+                    <button onclick="moverFoto(this, 'esquerda')"
+                        class="hover:text-orange-400 px-2 font-bold text-lg">&larr;</button>
+                    <span class="text-xs font-bold ordem-texto">#{{ img.view_order }}</span>
+                    <button onclick="moverFoto(this, 'direita')"
+                        class="hover:text-orange-400 px-2 font-bold text-lg">&rarr;</button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 col-span-full">Nenhuma foto salva ainda.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+
+<script>
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const galeria = document.getElementById('galeria-fotos');
+
+    // 1. Excluir Foto
+    function excluirFoto(btn) {
+        const itemAtual = btn.closest('.foto-item');
+        const id = itemAtual.getAttribute('data-id'); // Puxa o ID limpo sem erro de formatação
+        
+        if(confirm('Tem certeza que deseja excluir esta foto?')) {
+            fetch(`/foto/${id}/excluir/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken }
+            }).then(res => {
+                if(res.ok) {
+                    itemAtual.remove();
+                    salvarOrdem(); // Reorganiza a numeração de quem sobrou
+                }
+            });
+        }
+    }
+
+    // 2. Mover Foto (Esquerda ou Direita)
+    function moverFoto(btn, direcao) {
+        const itemAtual = btn.closest('.foto-item');
+
+        if (direcao === 'esquerda' && itemAtual.previousElementSibling) {
+            itemAtual.parentNode.insertBefore(itemAtual, itemAtual.previousElementSibling);
+            salvarOrdem();
+        } else if (direcao === 'direita' && itemAtual.nextElementSibling) {
+            itemAtual.parentNode.insertBefore(itemAtual.nextElementSibling, itemAtual);
+            salvarOrdem();
+        }
+    }
+
+    // 3. Enviar Nova Ordem para o Banco
+    function salvarOrdem() {
+        const itens = Array.from(galeria.querySelectorAll('.foto-item'));
+        const idsOrdem = itens.map(item => item.getAttribute('data-id'));
+
+        // Atualiza os textinhos #1, #2 na tela imediatamente
+        itens.forEach((item, index) => {
+            item.querySelector('.ordem-texto').innerText = `#${index + 1}`;
+        });
+
+        fetch("{% url 'ordenar_fotos' property.id %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ ordem: idsOrdem })
+        });
+    }
+
+    // Lógica do Drag and Drop de Uploads (mantida igual)
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-orange-500'); });
+    dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('border-orange-500'); });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-orange-500');
+        if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) uploadFiles(e.target.files);
+    });
+
+    function uploadFiles(files) {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
+
+        uploadStatus.classList.remove('hidden');
+        fileInput.disabled = true;
+
+        fetch("{% url 'imovel_fotos' property.id %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
+        }).then(response => {
+            if (response.ok) window.location.reload();
+        });
+    }
+
+    function tornarPrincipal(btn) {
+        const itemAtual = btn.closest('.foto-item');
+        
+        // Coloca o item atual antes do primeiro elemento da galeria
+        galeria.insertBefore(itemAtual, galeria.firstChild);
+        
+        // Salva no banco a nova ordem
+        salvarOrdem();
+    }
+</script>
+{% endblock %}

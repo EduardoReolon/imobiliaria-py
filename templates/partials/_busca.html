@@ -1,0 +1,90 @@
+<div class="bg-white p-4 rounded-lg shadow-md mb-10 border-t-4 border-orange-500">
+    <form action="/imoveis/" method="GET" class="flex flex-col md:flex-row gap-4">
+        
+        <!-- Filtro: Finalidade (Venda/Locação) -->
+        <div class="flex-1">
+            <label for="categoria" class="block text-sm font-bold text-gray-700 mb-1">Finalidade</label>
+            <select name="categoria" id="categoria" class="w-full border border-gray-300 rounded p-2 focus:ring-orange-500 focus:border-orange-500">
+                {% for cat in categorias %}
+                    <!-- Marca como selected se estiver na URL OU se não houver URL e for a Venda (ID 2) -->
+                    <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" or not request.GET.categoria and cat.id == 2 %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Filtro: Tipo -->
+        <div class="flex-1">
+            <label for="tipo" class="block text-sm font-bold text-gray-700 mb-1">O que você procura?</label>
+            <select name="tipo" id="tipo" class="w-full border border-gray-300 rounded p-2 focus:ring-orange-500 focus:border-orange-500">
+                <option value="">Todos os tipos</option>
+                {% for tipo in tipos %}
+                    <!-- Injetamos o data-category para o JS conseguir ler -->
+                    <option value="{{ tipo.name }}" data-category="{{ tipo.category_id }}" {% if request.GET.tipo == tipo.name and request.GET.categoria|default:"2" == tipo.category_id|stringformat:"s" %}selected{% endif %}>
+                        {{ tipo.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Filtro: Cidade -->
+        <div class="flex-1">
+            <label for="cidade" class="block text-sm font-bold text-gray-700 mb-1">Onde?</label>
+            <select name="cidade" id="cidade" class="w-full border border-gray-300 rounded p-2 focus:ring-orange-500 focus:border-orange-500">
+                <option value="">Qualquer cidade</option>
+                {% for cidade in cidades %}
+                    {% if cidade and cidade != 'None' %}
+                        <option value="{{ cidade }}" {% if request.GET.cidade == cidade %}selected{% endif %}>
+                            {{ cidade }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Botão Buscar -->
+        <div class="flex items-end">
+            <button type="submit" class="w-full md:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-8 rounded transition duration-200">
+                Buscar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const categoriaSelect = document.getElementById("categoria");
+    const tipoSelect = document.getElementById("tipo");
+
+    function filtrarTipos() {
+        const categoriaId = categoriaSelect.value;
+        let tipoAtualAindaValido = false;
+        
+        // Percorre todas as opções de Tipo, ignorando a index 0 ("Todos os tipos")
+        for (let i = 1; i < tipoSelect.options.length; i++) {
+            let option = tipoSelect.options[i];
+            
+            if (option.getAttribute("data-category") === categoriaId) {
+                option.hidden = false;
+                option.disabled = false;
+                if (option.selected) tipoAtualAindaValido = true;
+            } else {
+                option.hidden = true;
+                option.disabled = true; // Necessário para o Safari/iOS respeitar o block
+            }
+        }
+        
+        // Se a pessoa trocou a finalidade e o tipo que estava marcado sumiu, volta pro vazio
+        if (!tipoAtualAindaValido && tipoSelect.value !== "") {
+            tipoSelect.value = "";
+        }
+    }
+
+    // Ouve a mudança de categoria
+    categoriaSelect.addEventListener("change", filtrarTipos);
+    
+    // Executa uma vez no carregamento da página para já esconder os errados
+    filtrarTipos(); 
+});
+</script>

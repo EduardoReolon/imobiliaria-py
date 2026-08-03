@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block whatsapp_msg %}Olá! Estou procurando imóveis{% if request.GET.categoria == '3' %} para alugar{% else %} à
+venda{% endif %}{% if request.GET.cidade %} em {{ request.GET.cidade }}{% endif %}{% if request.GET.tipo %} ({{
+request.GET.tipo }}){% endif %}. Podem me ajudar?{% endblock %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="mb-6 flex justify-end">
+    <a href="{% url 'imovel_create' %}"
+        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow">
+        + Cadastrar Novo Imóvel
+    </a>
+</div>
+{% endif %}
+
+<h1 class="text-3xl font-bold text-amber-900 mb-6">Resultados da Busca</h1>
+
+<!-- Barra de Pesquisa reaproveitada -->
+{% include 'partials/_busca.html' %}
+
+<!-- Podemos injetar a mesma barra de busca aqui depois para ele refazer o filtro -->
+
+<div class="mb-4 text-gray-600">
+    Encontramos {{ imoveis.count }} imóvel(is).
+</div>
+
+<!-- Seletor de Ordenação -->
+<div class="flex justify-end mb-6">
+    <form method="GET" action="" class="flex items-center gap-2">
+        <!-- Mantém os filtros atuais ativos na URL invisivelmente -->
+        {% if request.GET.tipo %}<input type="hidden" name="tipo" value="{{ request.GET.tipo }}">{% endif %}
+        {% if request.GET.cidade %}<input type="hidden" name="cidade" value="{{ request.GET.cidade }}">{% endif %}
+        {% if request.GET.categoria %}<input type="hidden" name="categoria" value="{{ request.GET.categoria }}">{% endif %}
+        
+        <label for="ordem" class="text-sm font-bold text-gray-700">Ordenar por:</label>
+        <select name="ordem" id="ordem" onchange="this.form.submit()" class="border border-gray-300 p-2 rounded shadow-sm bg-white text-gray-700 outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="recentes" {% if ordem_atual == 'recentes' %}selected{% endif %}>Mais Recentes</option>
+            <option value="menor_preco" {% if ordem_atual == 'menor_preco' %}selected{% endif %}>Menor Preço</option>
+            <option value="maior_preco" {% if ordem_atual == 'maior_preco' %}selected{% endif %}>Maior Preço</option>
+        </select>
+    </form>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for imovel in imoveis %}
+    {% include 'partials/_card_imovel.html' with imovel=imovel %}
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+        <p class="text-xl text-gray-600 mb-4">Nenhum imóvel encontrado com esses filtros.</p>
+        <a href="/imoveis/" class="text-orange-600 font-bold hover:underline">Limpar filtros e ver todos</a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginação -->
+{% if imoveis.has_other_pages %}
+<div class="flex justify-center mt-12 mb-8">
+    <nav class="inline-flex rounded-md shadow-sm overflow-hidden">
+        
+        <!-- Botão Anterior -->
+        {% if imoveis.has_previous %}
+            <a href="?page={{ imoveis.previous_page_number }}{% if request.GET.tipo %}&tipo={{ request.GET.tipo }}{% endif %}{% if request.GET.cidade %}&cidade={{ request.GET.cidade }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.ordem %}&ordem={{ request.GET.ordem }}{% endif %}" class="px-4 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                &laquo; Anterior
+            </a>
+        {% endif %}
+
+        <!-- Números das Páginas -->
+        {% for num in imoveis.paginator.page_range %}
+            {% if imoveis.number == num %}
+                <span class="px-4 py-2 border-y border-blue-500 bg-blue-50 text-blue-700 font-bold">
+                    {{ num }}
+                </span>
+            {% else %}
+                <a href="?page={{ num }}{% if request.GET.tipo %}&tipo={{ request.GET.tipo }}{% endif %}{% if request.GET.cidade %}&cidade={{ request.GET.cidade }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.ordem %}&ordem={{ request.GET.ordem }}{% endif %}" class="px-4 py-2 border-y border-l border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Botão Próxima -->
+        {% if imoveis.has_next %}
+            <a href="?page={{ imoveis.next_page_number }}{% if request.GET.tipo %}&tipo={{ request.GET.tipo }}{% endif %}{% if request.GET.cidade %}&cidade={{ request.GET.cidade }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.ordem %}&ordem={{ request.GET.ordem }}{% endif %}" class="px-4 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+                Próxima &raquo;
+            </a>
+        {% endif %}
+        
+    </nav>
+</div>
+{% endif %}
+{% endblock %}

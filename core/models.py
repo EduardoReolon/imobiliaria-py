@@ -1,4 +1,14 @@
 from django.db import models
+import uuid
+import os
+from io import BytesIO
+from PIL import Image as PILImage
+from django.core.files.base import ContentFile
+
+def get_image_filename(instance, filename):
+    # Gera o nome no formato: {id_propriedade}_{hash_aleatorio}.webp
+    short_hash = uuid.uuid4().hex[:8]
+    return f"properties/images/{instance.property_id}_{short_hash}.webp"
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -80,15 +90,33 @@ class Property(models.Model):
 
 
 class Image(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')
-    # Usando ImageField como combinado. O upload_to define a pasta dentro do MEDIA_ROOT
-    image = models.ImageField(upload_to='properties/images/', max_length=255, null=True, blank=True)
+    property = models.ForeignKey('Property', on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to=get_image_filename, max_length=255, null=True, blank=True)
     view_order = models.PositiveIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Image'
         verbose_name_plural = 'Images'
         ordering = ['view_order']
+
+    def save(self, *args, **kwargs):
+        # Se existe imagem e ela ainda não é um WebP, fazemos a conversão
+        if self.image and not self.image.name.lower().endswith('.webp'):
+            img = PILImage.open(self.image)
+            
+            # Converte para RGB caso seja PNG com fundo transparente ou RGBA
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+                
+            output = BytesIO()
+            img.save(output, format='WEBP', quality=85)
+            output.seek(0)
+            
+            # Substitui a imagem enviada pela versão WebP processada
+            # O nome temporário não importa, a função get_image_filename dará o nome final
+            self.image = ContentFile(output.read(), name='temp.webp')
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Image for Property {self.property_id}"

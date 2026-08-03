@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if property %}Editar Imóvel {{ property.id }}{% else %}Novo Imóvel{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md mb-10">
+    <h1 class="text-3xl font-bold text-amber-900 mb-6">
+        {% if property %}Editar Imóvel (Cód: {{ property.id }}){% else %}Cadastrar Novo Imóvel{% endif %}
+    </h1>
+
+    {% if property %}
+    <div
+        class="bg-blue-50 border border-blue-200 p-4 rounded mb-6 flex flex-col md:flex-row justify-between items-center shadow-sm">
+        <span class="text-blue-800 font-bold mb-3 md:mb-0">Este imóvel está salvo. Agora você pode adicionar
+            fotos.</span>
+        <a href="{% url 'imovel_fotos' property.id %}"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+            📸 Gerenciar Fotos
+        </a>
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- GRUPO 1: DADOS PÚBLICOS -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold text-gray-800 border-b-2 border-orange-500 pb-2 mb-6">1. Dados Públicos
+                (Visíveis no site)</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full md:col-span-1">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Subcategoria</label>
+                    {{ form.subcategory }}
+                </div>
+
+                <div class="col-span-full md:col-span-1 flex items-center gap-4 mt-6">
+                    <label class="flex items-center font-bold text-gray-700">
+                        {{ form.is_visible }} <span class="ml-2">Ativo no site?</span>
+                    </label>
+                    <label class="flex items-center font-bold text-gray-700">
+                        {{ form.highlight }} <span class="ml-2">Destaque na Home?</span>
+                    </label>
+                    <label class="flex items-center font-bold text-red-600">
+                        {{ form.sold }} <span class="ml-2">Vendido?</span>
+                    </label>
+                </div>
+
+                <!-- Endereço -->
+                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Endereço</label>{{
+                    form.address }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Número</label>{{ form.number }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Complemento</label>{{ form.complement }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Bairro</label>{{ form.neighborhood }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Cidade</label>{{ form.town }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Estado (UF)</label>{{ form.state }}</div>
+
+                <!-- Detalhes Físicos -->
+                <div class="col-span-full mt-4"><label class="block text-sm font-bold text-gray-700 mb-1">Preço de Venda
+                        (R$)</label>{{ form.price }}</div>
+                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Descrição Breve
+                        (Card)</label>{{ form.brief_description }}</div>
+                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Descrição
+                        Completa</label>{{ form.description }}</div>
+
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Quartos</label>{{ form.bedrooms }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Banheiros</label>{{ form.bathrooms }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Vagas</label>{{ form.garage }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Área Útil/Construída (m²)</label>{{
+                    form.area_facility }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Área Terreno (m²)</label>{{
+                    form.area_land }}</div>
+                <div class="col-span-full">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">ID do Vídeo no YouTube</label>
+                    {{ form.youtube }}
+                    <div id="yt-preview-container" class="hidden mt-4">
+                        <p class="text-sm text-gray-600 mb-1">Preview do Vídeo:</p>
+                        <iframe id="yt-iframe" class="w-full md:w-1/2 h-64 rounded shadow" src="" frameborder="0"
+                            allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO 2: DADOS INTERNOS / CONTRATO -->
+        <div class="mb-10 bg-gray-50 p-6 rounded border">
+            <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-400 pb-2 mb-6">2. Dados Internos (Apenas
+                Admin)</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Nome do
+                        Proprietário</label>{{ form.owner_name }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">RG</label>{{ form.owner_id }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">CPF</label>{{ form.owner_cpf }}</div>
+
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Telefone 1</label>{{ form.owner_fone1 }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Telefone 2</label>{{ form.owner_fone2 }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Telefone 3</label>{{ form.owner_fone3 }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Telefone 4</label>{{ form.owner_fone4 }}
+                </div>
+
+                <!-- Matrícula -->
+                <div class="col-span-full mt-4"><label
+                        class="block text-sm font-bold text-gray-700 mb-1">Matrícula</label>{{ form.registration }}
+                </div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Quadra</label>{{ form.square }}</div>
+                <div><label class="block text-sm font-bold text-gray-700 mb-1">Lote</label>{{ form.lot }}</div>
+
+                <div class="col-span-full"><label class="block text-sm font-bold text-gray-700 mb-1">Anotações /
+                        Negociação</label>{{ form.parley }}</div>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+            <a href="{% if property %}{% url 'imovel_detail' property.id %}{% else %}/{% endif %}"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded">
+                Salvar Imóvel
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Script do IBGE para Cidades do PR -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const townSelect = document.getElementById("id_town");
+
+        // Pega o valor atual (seja do banco de dados na edição ou do POST se deu erro)
+        const currentTown = "{{ form.town.value|default_if_none:'' }}";
+
+        // Mostra carregando enquanto a API responde
+        townSelect.innerHTML = '<option value="">Carregando cidades...</option>';
+
+        // Código 41 é o estado do Paraná no IBGE
+        fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/41/municipios")
+            .then(response => response.json())
+            .then(data => {
+                townSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+
+                data.forEach(municipio => {
+                    const option = document.createElement("option");
+                    option.value = municipio.nome;
+                    option.textContent = municipio.nome;
+
+                    if (municipio.nome === currentTown) {
+                        option.selected = true;
+                    }
+
+                    townSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                townSelect.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+                console.error("Erro IBGE:", error);
+            });
+    });
+
+    const ytInput = document.getElementById('id_youtube');
+    const ytContainer = document.getElementById('yt-preview-container');
+    const ytIframe = document.getElementById('yt-iframe');
+
+    function updateYT() {
+        if (ytInput && ytInput.value.trim() !== '') {
+            ytIframe.src = `https://www.youtube.com/embed/${ytInput.value.trim()}`;
+            ytContainer.classList.remove('hidden');
+        } else {
+            ytContainer.classList.add('hidden');
+            ytIframe.src = '';
+        }
+    }
+
+    if (ytInput) {
+        ytInput.addEventListener('input', updateYT);
+        updateYT();
+    }
+</script>
+{% endblock %}

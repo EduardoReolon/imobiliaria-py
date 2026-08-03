@@ -1,0 +1,62 @@
+{% load humanize static %}
+<div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col relative">
+
+    <!-- Etiqueta de Venda/Oculto (Admin) -->
+    {% if request.user.is_authenticated and not imovel.is_visible %}
+    <span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">Oculto</span>
+    {% endif %}
+
+    <a href="{% url 'imovel_detail' imovel.id %}" class="relative block">
+
+        {% if request.user.is_authenticated %}
+        {% if not imovel.is_visible %}
+        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow z-10">
+            👁️ Oculto do Site
+        </span>
+        {% elif imovel.highlight %}
+        <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded shadow z-10">
+            ⭐ Destaque
+        </span>
+        {% endif %}
+        {% endif %}
+
+        <!-- Carimbo de Vendido/Alugado -->
+        {% if imovel.sold %}
+        <div class="absolute inset-0 z-20 flex items-center justify-center bg-white/40 pointer-events-none">
+            {% if imovel.subcategory.category_id == 3 %}
+            <img src="{% static 'img/alugado.png' %}" alt="Alugado" class="w-2/3 object-contain drop-shadow-md">
+            {% else %}
+            <img src="{% static 'img/vendido.png' %}" alt="Vendido" class="w-2/3 object-contain drop-shadow-md">
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if imovel.images.first %}
+        <img src="{{ imovel.images.first.image.url }}" alt="Imóvel"
+            class="w-full h-48 object-cover hover:opacity-90 transition">
+        {% else %}
+        <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">Sem foto</div>
+        {% endif %}
+    </a>
+
+    <div class="p-4 flex-grow flex flex-col">
+        <span class="text-sm text-orange-600 font-bold mb-1">{{ imovel.subcategory.name }}</span>
+        <h3 class="text-lg font-bold text-amber-900 mb-2 leading-tight">
+            {% if imovel.neighborhood and imovel.neighborhood != 'None' %}
+            {{ imovel.neighborhood }} -
+            {% endif %}
+            {{ imovel.town }}
+        </h3>
+        <p class="text-2xl font-extrabold text-gray-800 mb-4">R$ {{ imovel.price|intcomma }}</p>
+
+        <div class="mt-auto flex justify-between items-center border-t pt-4">
+            <a href="{% url 'imovel_detail' imovel.id %}" class="text-orange-600 font-bold hover:underline">Ver
+                detalhes</a>
+
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'imovel_edit' imovel.id %}"
+                class="bg-gray-800 text-white text-sm px-3 py-1 rounded hover:bg-gray-700">Editar</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
