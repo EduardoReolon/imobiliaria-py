@@ -9,10 +9,17 @@
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     
+    <!-- Metatags Open Graph (WhatsApp, Facebook, Google) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block title %}Imobiliária Manduri{% endblock %}">
+    <meta property="og:description" content="Encontre os melhores imóveis na Imobiliária Manduri.">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo.png' %}{% endblock %}">
+    
     <!-- Tailwind CSS (via CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Adiciona suporte aos blocos de SEO, como a imagem do WhatsApp -->
+    <!-- Adiciona suporte a blocos extras no head (se precisar no futuro) -->
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen text-gray-800 font-sans">
