@@ -1,0 +1,89 @@
+name: Deploy Imobiliaria-py
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SERVER_TARGET_PATH: /home/ubuntu/imobiliaria-py
+      ENABLE_TESTS: "false"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Clean unnecessary files before deployment
+        run: |
+          rm -rf .git/
+          rm -f db.sqlite3
+          echo "Limpeza pré-deploy concluída."
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          source: "."
+          target: ${{ env.SERVER_TARGET_PATH }}
+          rm: false
+
+      - name: Run remote commands
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y python3-dev build-essential python3-pip
+
+            TARGET_PATH=${{ env.SERVER_TARGET_PATH }}
+            cd $TARGET_PATH
+
+            # 1. Setup inicial
+            mkdir -p logs
+            echo -e "${{ secrets.PRODUCTION_ENV_FILE }}" > .env
+
+            PARENT_DIR=$(dirname "${{ env.SERVER_TARGET_PATH }}")
+            STORAGE_PATH="${PARENT_DIR}/storage-imobiliaria"
+            mkdir -p "$STORAGE_PATH"
+            chmod 775 "$STORAGE_PATH"
+            echo "MEDIA_ROOT=${STORAGE_PATH}" >> .env
+
+            # 2. Venv
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            source venv/bin/activate
+
+            # 3. Dependências (Cache Check com Conceito Flexível)
+            NEW_REQ_HASH=$(sha256sum requirements.txt | awk '{ print $1 }')
+            OLD_REQ_HASH_FILE=".requirements_hash"
+
+            if [ "$NEW_REQ_HASH" != "$(cat $OLD_REQ_HASH_FILE 2>/dev/null)" ]; then
+              echo "Dependências mudaram. Instalando..."
+              pip install --upgrade pip setuptools wheel
+              if [ -f "convert_requirements.py" ]; then
+                python convert_requirements.py
+              fi
+              if [ -f "requirements_flexible.txt" ]; then
+                pip install -r requirements_flexible.txt -c constraints.txt || pip install -r requirements.txt
+              else
+                pip install -r requirements.txt
+              fi
+              echo "$NEW_REQ_HASH" > $OLD_REQ_HASH_FILE
+            fi
+
+            # 4. Comandos Django
+            python manage.py migrate --noinput
+            python manage.py collectstatic --noinput
+
+            # 5. Restart dos Serviços
+            echo "Fazendo reload suave no Gunicorn..."
+            sudo systemctl reload gunicorn
