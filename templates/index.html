@@ -39,11 +39,58 @@
 <h2 class="text-2xl font-bold text-amber-900 mb-6">Destaques</h2>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for imovel in imoveis %}
+    <!-- Aplicado o filtro slice para limitar a 3 imóveis -->
+    {% for imovel in imoveis|slice:":3" %}
     {% include 'partials/_card_imovel.html' with imovel=imovel %}
     {% empty %}
     <p class="text-gray-600">Nenhum imóvel encontrado.</p>
     {% endfor %}
 </div>
+
+<!-- Nova Seção de Credibilidade: Fachada, Mapa e Widget -->
+<section class="py-12 mt-12 bg-white border-y border-gray-200 shadow-sm rounded-lg overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Fachada -->
+            <div class="flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold text-amber-900 mb-4">Nossa Estrutura</h3>
+                </div>
+                <img src="{% static 'img/fachada.webp' %}" alt="Fachada Imobiliária Manduri" class="w-full h-80 rounded-lg shadow-md object-cover">
+            </div>
+            
+            <!-- Mapa -->
+            <div class="flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold text-amber-900 mb-2">Como Chegar</h3>
+                    <p class="text-gray-600 mb-4">Av. Brasil, 711 - Mandirituba, PR</p>
+                </div>
+                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Av.+Brasil,+711+-+Mandirituba,+PR&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIDGET DE AVALIAÇÕES E GERENCIAMENTO DE PERFORMANCE -->
+        <div class="data-agent-widget flex flex-col justify-center min-h-[420px]"
+             data-uuid="726dc3db" 
+             data-reviews="b1c0eba3,1ac71f8e,244ea734,24e207c5"
+             data-track-leads="true"
+             data-load-fa="true"
+             data-lazy-aos="true"
+             data-gtm-ids="GTM-K52Z7PTQ"
+             data-clarity-id="xxtxnifcbm">
+        </div>
+
+    </div>
+</section>
 
 {% endblock %}
