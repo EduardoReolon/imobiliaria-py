@@ -25,6 +25,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Manduri">
     <link rel="apple-touch-icon" href="{% static 'img/icon-192.png' %}">
+
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
         {% include 'partials/_tailwind.html' %}
@@ -114,7 +117,7 @@
         data-uuid="726dc3db" 
         data-reviews="b1c0eba3,1ac71f8e,244ea734,24e207c5"
         data-track-leads="true"
-        data-load-fa="true"
+        data-load-fa="false"
         data-lazy-aos="true"
         data-gtm-ids="GTM-K52Z7PTQ"
         data-clarity-id="xxtxnifcbm"></script>
