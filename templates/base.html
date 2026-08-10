@@ -15,6 +15,16 @@
     <meta property="og:title" content="{% block og_title %}Imobiliária Manduri{% endblock %}">
     <meta property="og:description" content="Encontre os melhores imóveis na Imobiliária Manduri.">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo-wp.png' %}{% endblock %}">
+
+    <!-- Configuração para o App (Android e iOS) -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ea580c">
+    
+    <!-- Tags obrigatórias para o iPhone (iOS) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Manduri">
+    <link rel="apple-touch-icon" href="{% static 'img/icon-192.png' %}">
     
     <style>
         {% include 'partials/_tailwind.html' %}
