@@ -129,36 +129,31 @@ class Image(models.Model):
         if not self.image:
             return ""
 
-        original_path = self.image.name  # Ex: imoveis/foto1.webp
+        original_path = self.image.name  # Ex: imoveis/foto1.jpg
         
-        # Separa o nome da extensão para injetar o "-thumb"
-        base_name, ext = os.path.splitext(original_path)
-        thumb_path = f"{base_name}-thumb{ext}"  # Ex: imoveis/foto1-thumb.webp
+        # 1. Ignoramos a extensão original e forçamos a string ".webp" no final
+        base_name, _ = os.path.splitext(original_path)
+        thumb_path = f"{base_name}-thumb.webp"  # Ex: imoveis/foto1-thumb.webp
 
-        # 1. Verifica se a miniatura JÁ existe no sistema de arquivos
         if not default_storage.exists(thumb_path):
             try:
-                # 2. Se não existir, abre a original para processar
                 with default_storage.open(original_path, 'rb') as f:
                     img = PILImage.open(f)
                     
-                    # Redimensiona proporcionalmente para o tamanho de card (ex: max 600px de largura)
                     if img.width > 600:
                         output_size = (600, int((600 / img.width) * img.height))
                         img = img.resize(output_size, PILImage.Resampling.LANCZOS)
                     
-                    # Salva em memória
                     output = BytesIO()
-                    img.save(output, format='WEBP', quality=75)  # 75 é excelente para thumbs
+                    img.save(output, format='WEBP', quality=75) 
                     output.seek(0)
                     
-                    # 3. Grava o novo arquivo físico direto no disco
                     default_storage.save(thumb_path, ContentFile(output.read()))
             except Exception as e:
-                # Caso dê algum erro na leitura/escrita, retorna a original por segurança
+                # 2. Print para descobrirmos o motivo de falhar silenciosamente no servidor
+                print(f"ERRO AO GERAR THUMB: {e}")
                 return self.image.url
 
-        # 4. Retorna a URL pública do arquivo thumb gerado
         return default_storage.url(thumb_path)
 
     def __str__(self):

@@ -16,8 +16,9 @@
     <meta property="og:description" content="Encontre os melhores imóveis na Imobiliária Manduri.">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo-wp.png' %}{% endblock %}">
     
-    <!-- Tailwind CSS (via CDN) -->
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <style>
+        {% include 'partials/_tailwind.html' %}
+    </style>
 
     <!-- Adiciona suporte a blocos extras no head (se precisar no futuro) -->
     {% block extra_head %}{% endblock %}
