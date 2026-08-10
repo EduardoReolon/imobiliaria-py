@@ -34,7 +34,11 @@ def whatsapp_thumbnail(request, property_id):
         raise Http404("Erro ao processar a imagem para o WhatsApp")
 
 def home(request):
-    base_query = Property.objects.filter(highlight=True)
+    # A MÁGICA ESTÁ AQUI: select_related para chaves estrangeiras e prefetch para as fotos
+    base_query = Property.objects.filter(highlight=True).select_related(
+        'subcategory', 'subcategory__category'
+    ).prefetch_related('images')
+    
     if not request.user.is_authenticated:
         base_query = base_query.filter(is_visible=True)
         
@@ -42,10 +46,7 @@ def home(request):
     
     cidades = Property.objects.values_list('town', flat=True).distinct().order_by('town')
     
-    # Busca apenas os NOMES únicos das subcategorias para não duplicar no dropdown
     tipos = Subcategory.objects.filter(is_visible=True).values('name', 'category_id').order_by('name')
-    
-    # Busca as categorias (Venda / Locação)
     categorias = Category.objects.filter(is_visible=True).order_by('name')
     
     ultimo_imovel = Property.objects.order_by('-id').first() if request.user.is_authenticated else None

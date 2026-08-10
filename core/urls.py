@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core import views
 from django.contrib.auth import views as auth_views
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +28,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     
-    path('', views.home, name='home'),    
+    path('', cache_page(900)(views.home), name='home'),
     path('imoveis/<int:property_id>/whatsapp-thumb.jpg', views.whatsapp_thumbnail, name='whatsapp_thumb'),
     path('imoveis/', views.lista_imoveis, name='lista_imoveis'),
     path('imovel/<int:id>/', views.imovel_detail, name='imovel_detail'),
