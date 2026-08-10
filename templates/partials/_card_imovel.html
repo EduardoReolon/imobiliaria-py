@@ -41,7 +41,7 @@
     </a>
 
     <div class="p-4 flex-grow flex flex-col">
-        <span class="text-sm text-orange-600 font-bold mb-1">{{ imovel.subcategory.name }}</span>
+        <span class="text-sm text-orange-700 font-bold mb-1">{{ imovel.subcategory.name }}</span>
         <h3 class="text-lg font-bold text-amber-900 mb-2 leading-tight">
             {% if imovel.neighborhood and imovel.neighborhood != 'None' %}
             {{ imovel.neighborhood }} -
@@ -51,7 +51,7 @@
         <p class="text-2xl font-extrabold text-gray-800 mb-4">R$ {{ imovel.price|intcomma }}</p>
 
         <div class="mt-auto flex justify-between items-center border-t pt-4">
-            <a href="{% url 'imovel_detail' imovel.id %}" class="text-orange-600 font-bold hover:underline">Ver
+            <a href="{% url 'imovel_detail' imovel.id %}" class="text-orange-700 font-bold hover:underline">Ver
                 detalhes</a>
 
             {% if request.user.is_authenticated %}
