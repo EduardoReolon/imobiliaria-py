@@ -70,15 +70,7 @@
                 </div>
                 <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
                     <!-- Container do Mapa: Altura fixa (h-64) e fundo cinza para não causar CLS -->
-                    <div id="map-container" 
-                        class="w-full h-64 bg-gray-100 rounded-lg overflow-hidden" 
-                        data-map-src="https://maps.google.com/maps?q=Av.+Brasil...+Mandirituba...&t=&z=16&ie=UTF8&iwloc=&output=embed">
-                        
-                        <!-- Opcional: Um texto ou ícone de carregamento no centro do espaço reservado -->
-                        <div class="w-full h-full flex items-center justify-center text-gray-400">
-                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando mapa...
-                        </div>
-                    </div>
+                    <div id="data-agent-map-container" class="w-full h-64 bg-gray-100 overflow-hidden rounded-lg"></div>
                     <!-- <iframe 
                         src="https://maps.google.com/maps?q=Av.+Brasil,+711+-+Mandirituba,+PR&t=&z=16&ie=UTF8&iwloc=&output=embed" 
                         title="Mapa de localização da Imobiliária"
@@ -97,40 +89,5 @@
 
     </div>
 </section>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const mapContainer = document.getElementById('map-container');
-        
-        if (mapContainer) {
-            // O IntersectionObserver vigia quando o elemento chega perto da tela
-            const observer = new IntersectionObserver(function(entries, observer) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // Quando o usuário rola perto do mapa, injetamos o iframe
-                        const src = mapContainer.getAttribute('data-map-src');
-                        
-                        mapContainer.innerHTML = `
-                            <iframe src="${src}" 
-                                    title="Mapa de localização da Imobiliária" 
-                                    width="100%" height="100%" 
-                                    style="border:0;" 
-                                    allowfullscreen="" 
-                                    loading="lazy">
-                            </iframe>`;
-                        
-                        // Desliga o vigia para não rodar novamente
-                        observer.unobserve(mapContainer);
-                    }
-                });
-            }, { 
-                // rootMargin: Começa a baixar o mapa 300 pixels ANTES dele aparecer na tela
-                rootMargin: "300px 0px" 
-            });
-
-            observer.observe(mapContainer);
-        }
-    });
-</script>
 
 {% endblock %}
