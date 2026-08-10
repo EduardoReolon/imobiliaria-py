@@ -28,7 +28,7 @@
 <!-- Banner de Empreendimento Específico -->
 {% if mostrar_banner_oferta %}
 <div class="w-full md:w-1/2 mx-auto mb-8 rounded-lg overflow-hidden shadow-lg">
-    <img src="{% static 'img/ciman.webp' %}" alt="Lançamento" class="w-full h-auto object-cover">
+    <img rel="preload" as="image" src="{% static 'img/ciman.webp' %}" alt="Lançamento" class="w-full h-auto object-cover">
 </div>
 {% endif %}
 
@@ -57,7 +57,7 @@
                 <div class="flex-grow">
                     <h3 class="text-xl font-bold text-amber-900 mb-4">Nossa Estrutura</h3>
                 </div>
-                <img src="{% static 'img/fachada.webp' %}" alt="Fachada Imobiliária Manduri" class="w-full h-80 rounded-lg shadow-md object-cover">
+                <img src="{% static 'img/fachada.webp' %}" width="1200" height="584" alt="Fachada Imobiliária Manduri" class="w-full h-80 rounded-lg shadow-md object-cover">
             </div>
             
             <!-- Mapa -->

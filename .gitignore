@@ -1,6 +1,7 @@
 # Ambientes Virtuais
 venv/
 env/
+node_modules/
 .env
 
 # Python

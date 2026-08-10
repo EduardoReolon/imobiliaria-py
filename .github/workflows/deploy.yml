@@ -20,6 +20,12 @@ jobs:
           rm -rf .git/
           rm -f db.sqlite3
           echo "Limpeza pré-deploy concluída."
+      
+      - name: Build Tailwind CSS
+        run: |
+          echo "Instalando dependências do Node e compilando CSS..."
+          npm ci
+          npx @tailwindcss/cli -i ./static/css/input.css -o ./static/css/output.css --minify
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
