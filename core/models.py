@@ -140,17 +140,22 @@ class Image(models.Model):
                 with default_storage.open(original_path, 'rb') as f:
                     img = PILImage.open(f)
                     
-                    if img.width > 600:
-                        output_size = (600, int((600 / img.width) * img.height))
+                    # Achata a imagem removendo a transparência (essencial para WEBP ficar leve)
+                    if img.mode in ('RGBA', 'P', 'LA'):
+                        img = img.convert('RGB')
+                    
+                    # Reduzimos de 600 para 400px (tamanho perfeito para os cards)
+                    if img.width > 400:
+                        output_size = (400, int((400 / img.width) * img.height))
                         img = img.resize(output_size, PILImage.Resampling.LANCZOS)
                     
                     output = BytesIO()
-                    img.save(output, format='WEBP', quality=75) 
+                    # Quality 70 entrega uma imagem nítida com um tamanho minúsculo
+                    img.save(output, format='WEBP', quality=70) 
                     output.seek(0)
                     
                     default_storage.save(thumb_path, ContentFile(output.read()))
             except Exception as e:
-                # 2. Print para descobrirmos o motivo de falhar silenciosamente no servidor
                 print(f"ERRO AO GERAR THUMB: {e}")
                 return self.image.url
 
