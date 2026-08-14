@@ -234,4 +234,24 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
         </a>
     </div>
 </div>
+
+<!-- Evento Google: View Item (Remarketing Dinâmico) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'view_item',
+            'ecommerce': {
+                'items': [{
+                    'item_id': '{{ property.id }}',
+                    'item_name': '{{ property.subcategory.name }} em {{ property.town }}',
+                    'item_category': '{{ property.subcategory.category.name }}', // Ex: Venda ou Locação
+                    'item_category2': '{{ property.subcategory.name }}',       // Ex: Casa, Apartamento
+                    'price': parseFloat('{{ property.price|stringformat:"f" }}'),
+                    'currency': 'BRL'
+                }]
+            }
+        });
+    });
+</script>
 {% endblock %}

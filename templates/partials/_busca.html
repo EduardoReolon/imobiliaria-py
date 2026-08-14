@@ -3,15 +3,15 @@
         
         <!-- Filtro: Finalidade (Venda/Locação) -->
         <div class="flex-1">
-            <label for="categoria" class="block text-sm font-bold text-gray-700 mb-1">Finalidade</label>
-            <select name="categoria" id="categoria" class="w-full border border-gray-300 rounded p-2 focus:ring-orange-500 focus:border-orange-500">
-                {% for cat in categorias %}
-                    <!-- Marca como selected se estiver na URL OU se não houver URL e for a Venda (ID 2) -->
-                    <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:"s" or not request.GET.categoria and cat.id == 2 %}selected{% endif %}>
-                        {{ cat.name }}
-                    </option>
-                {% endfor %}
-            </select>
+            <label for="categoria_fake" class="block text-sm font-bold text-gray-700 mb-1">Finalidade</label>
+            <!-- Campo visual bloqueado -->
+            <input type="text" id="categoria_fake" value="Venda" disabled class="w-full border border-gray-300 rounded p-2 bg-gray-100 text-gray-500 cursor-not-allowed">
+            <!-- Input real que envia o ID 2 para o form e para o seu JS -->
+            <input type="hidden" name="categoria" id="categoria" value="2">
+            
+            <p class="text-red-600 text-xs mt-2 font-medium leading-tight">
+                * No momento, estamos sem imóveis disponíveis para locação.
+            </p>
         </div>
 
         <!-- Filtro: Tipo -->
@@ -87,4 +87,29 @@ document.addEventListener("DOMContentLoaded", function() {
     // Executa uma vez no carregamento da página para já esconder os errados
     filtrarTipos(); 
 });
+</script>
+
+<!-- Evento Google: Search -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formBusca = document.querySelector('form[action="/imoveis/"]');
+        
+        if (formBusca) {
+            formBusca.addEventListener('submit', function() {
+                const finalidade = document.getElementById('categoria_fake') ? document.getElementById('categoria_fake').value : '';
+                const tipo = document.getElementById('tipo') ? document.getElementById('tipo').value : '';
+                const cidade = document.getElementById('cidade') ? document.getElementById('cidade').value : '';
+                
+                const termosBusca = [finalidade, tipo, cidade].filter(Boolean).join(' - ');
+                
+                if (termosBusca) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'search',
+                        'search_term': termosBusca
+                    });
+                }
+            });
+        }
+    });
 </script>
