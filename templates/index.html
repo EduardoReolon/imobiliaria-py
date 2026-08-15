@@ -54,34 +54,31 @@
     <div class="max-w-7xl mx-auto px-4">
         
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
             <!-- Fachada -->
-            <div class="flex flex-col">
-                <div class="flex-grow">
-                    <h3 class="text-xl font-bold text-amber-900 mb-4">Nossa Estrutura</h3>
+            <div class="flex flex-col h-full">
+                <!-- flex-grow aqui faz o texto preencher o espaço vazio superior -->
+                <div class="mb-4 flex-grow">
+                    <h3 class="text-xl font-bold text-amber-900 mb-2">Nossa Estrutura</h3>
+                    <p class="text-gray-600 text-sm">
+                        Aliamos tradição com a vanguarda tecnológica. A inteligência de dados e a segurança na gestão da nossa base de clientes são estruturadas pela <a href="https://ekron.ia.br/" target="_blank" rel="noopener" class="text-orange-600 font-bold hover:underline">Ekron Consultoria</a>.
+                    </p>
                 </div>
-                <img src="{% static 'img/fachada.webp' %}" width="1200" height="584" alt="Fachada Imobiliária Manduri" class="w-full h-80 rounded-lg shadow-md object-cover">
+                <!-- block remove espaçamentos nativos de imagens -->
+                <img src="{% static 'img/fachada.webp' %}" width="1200" height="584" alt="Fachada Imobiliária Manduri" class="w-full h-72 object-cover rounded-lg shadow-md block">
             </div>
             
             <!-- Mapa -->
-            <div class="flex flex-col">
-                <div class="flex-grow">
+            <div class="flex flex-col h-full">
+                <!-- flex-grow aqui equaliza a altura com o texto da fachada -->
+                <div class="mb-4 flex-grow">
                     <h3 class="text-xl font-bold text-amber-900 mb-2">Como Chegar</h3>
-                    <p class="text-gray-600 mb-4">Av. Brasil, 711 - Mandirituba, PR</p>
+                    <p class="text-gray-600 text-sm">Av. Brasil, 711 - Mandirituba, PR</p>
                 </div>
-                <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
-                    <!-- Container do Mapa: Altura fixa (h-64) e fundo cinza para não causar CLS -->
-                    <div id="data-agent-map-container" class="w-full h-64 bg-gray-100 overflow-hidden rounded-lg"></div>
-                    <!-- <iframe 
-                        src="https://maps.google.com/maps?q=Av.+Brasil,+711+-+Mandirituba,+PR&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-                        title="Mapa de localização da Imobiliária"
-                        width="100%" 
-                        height="100%" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy">
-                    </iframe> -->
-                </div>
+                <!-- O 'flex' no container do widget mata o buraco branco fantasma do iframe -->
+                <div id="data-agent-map-container" class="w-full h-72 bg-gray-100 rounded-lg shadow-md overflow-hidden flex"></div>
             </div>
+
         </div>
 
         <!-- WIDGET DE AVALIAÇÕES E GERENCIAMENTO DE PERFORMANCE -->

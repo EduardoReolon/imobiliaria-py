@@ -101,8 +101,13 @@
 
     <!-- Rodapé -->
     <footer class="bg-amber-900 text-white mt-auto border-t-4 border-yellow-400">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm">
-            &copy; {{ anos_mercado|default:"36" }} anos de tradição. Imobiliária Manduri.
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center text-sm gap-4">
+            <div>
+                &copy; {{ anos_mercado|default:"36" }} anos de tradição. Imobiliária Manduri.
+            </div>
+            <div class="text-amber-200 opacity-80 hover:opacity-100 transition">
+                Auditoria e Inteligência de Dados por <a href="https://ekron.ia.br/" target="_blank" rel="noopener" class="font-bold underline hover:text-white">Ekron</a>
+            </div>
         </div>
     </footer>
 
