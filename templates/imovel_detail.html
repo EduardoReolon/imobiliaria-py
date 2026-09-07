@@ -42,8 +42,7 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
                 {% if property.town and property.town != 'None' %}{{ property.town }}{% else %}Cidade não informada{% endif %}
             </h1>
             {% if property.address and property.address != 'None' %}
-            <p class="text-gray-600">{{ property.address }}{% if property.number and property.number != 'None' %}, {{
-                property.number }}{% endif %}</p>
+            <p class="text-gray-600">{{ property.address }}{% if property.number and property.number != 'None' %}, {{ property.number }}{% endif %}</p>
             {% endif %}
         </div>
         <div class="mt-4 md:mt-0 text-left md:text-right">

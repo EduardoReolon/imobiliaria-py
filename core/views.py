@@ -56,7 +56,8 @@ def home(request):
         'cidades': cidades,
         'tipos': tipos,
         'categorias': categorias,
-        'ultimo_imovel': ultimo_imovel
+        'ultimo_imovel': ultimo_imovel,
+        'usuario_logado': request.user.is_authenticated
     })
 
 def lista_imoveis(request):
