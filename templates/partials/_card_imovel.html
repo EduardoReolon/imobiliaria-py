@@ -41,7 +41,10 @@
     </a>
 
     <div class="p-4 flex-grow flex flex-col">
-        <span class="text-sm text-orange-700 font-bold mb-1">{{ imovel.subcategory.name }}</span>
+        <div class="flex justify-between items-center mb-1 gap-2">
+            <span class="text-sm text-orange-700 font-bold">{{ imovel.subcategory.name }}</span>
+            <span class="text-xs font-bold text-gray-600 bg-gray-100 border rounded px-2 py-0.5 whitespace-nowrap">Cód. {{ imovel.id }}</span>
+        </div>
         <h3 class="text-lg font-bold text-amber-900 mb-2 leading-tight">
             {% if imovel.neighborhood and imovel.neighborhood != 'None' %}
             {{ imovel.neighborhood }} -

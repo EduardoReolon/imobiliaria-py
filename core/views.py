@@ -119,6 +119,21 @@ def imovel_detail(request, id):
         'image_urls': image_urls
     })
 
+def ir_codigo(request, id=None):
+    # Atalho "abra o imóvel X": aceita /imovel/?codigo=123 ou /123/
+    codigo = id if id is not None else request.GET.get('codigo', '')
+    codigo = ''.join(ch for ch in str(codigo) if ch.isdigit())
+
+    if codigo:
+        imoveis = Property.objects.filter(id=int(codigo))
+        if not request.user.is_authenticated:
+            imoveis = imoveis.filter(is_visible=True)
+        if imoveis.exists():
+            return redirect('imovel_detail', id=int(codigo))
+
+    messages.warning(request, f'Imóvel código {codigo or "?"} não encontrado.')
+    return redirect('lista_imoveis')
+
 @login_required
 def imovel_form(request, id=None):
     if id:

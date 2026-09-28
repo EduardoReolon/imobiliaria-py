@@ -36,19 +36,31 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
 <div class="bg-white p-6 rounded-lg shadow-md mb-8">
     <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 border-b pb-4">
         <div>
-            <span class="text-orange-600 font-bold uppercase tracking-wider text-sm">{{ property.subcategory.name }}</span>
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-orange-600 font-bold uppercase tracking-wider text-sm">{{ property.subcategory.category.name }} · {{ property.subcategory.name }}</span>
+                <span class="text-sm font-bold text-gray-700 bg-gray-100 border border-gray-300 rounded px-2 py-0.5">Cód. {{ property.id }}</span>
+                {% if property.sold %}
+                <span class="text-sm font-bold text-white bg-red-600 rounded px-2 py-0.5">{% if property.subcategory.category_id == 3 %}Alugado{% else %}Vendido{% endif %}</span>
+                {% endif %}
+            </div>
             <h1 class="text-3xl font-bold text-amber-900 mb-2 mt-1">
                 {% if property.neighborhood and property.neighborhood != 'None' %}{{ property.neighborhood }} - {% endif %}
                 {% if property.town and property.town != 'None' %}{{ property.town }}{% else %}Cidade não informada{% endif %}
             </h1>
-            {% if property.address and property.address != 'None' %}
-            <p class="text-gray-600">{{ property.address }}{% if property.number and property.number != 'None' %}, {{ property.number }}{% endif %}</p>
-            {% endif %}
+            <!-- Endereço completo -->
+            <p class="text-gray-600">
+                {% if property.address and property.address != 'None' %}{{ property.address }}{% if property.number and property.number != 'None' %}, {{ property.number }}{% endif %}{% if property.complement and property.complement != 'None' %} - {{ property.complement }}{% endif %}<br>{% endif %}
+                {% if property.neighborhood and property.neighborhood != 'None' %}{{ property.neighborhood }}, {% endif %}{% if property.town and property.town != 'None' %}{{ property.town }}{% endif %}{% if property.state and property.state != 'None' %} - {{ property.state }}{% endif %}
+            </p>
         </div>
         <div class="mt-4 md:mt-0 text-left md:text-right">
             <p class="text-4xl font-extrabold text-gray-800">R$ {{ property.price|intcomma }}</p>
         </div>
     </div>
+
+    {% if property.brief_description and property.brief_description != 'None' %}
+    <p class="text-lg text-gray-700 font-medium mb-6">{{ property.brief_description }}</p>
+    {% endif %}
 
     <!-- Estilo para esconder a barra de rolagem mas manter o scroll -->
     <style>
@@ -218,9 +230,9 @@ mais detalhes? Link: {{ request.build_absolute_uri }}{% endblock %}
 
     <!-- Descrição -->
     {% if property.description and property.description != 'None' %}
-    <div class="prose max-w-none text-gray-700 mb-8">
+    <div class="max-w-none text-gray-700 mb-8">
         <h3 class="text-xl font-bold text-amber-900 mb-4">Sobre o Imóvel</h3>
-        <p>{{ property.description|linebreaksbr }}</p>
+        <p class="leading-relaxed break-words">{{ property.description|linebreaksbr }}</p>
     </div>
     {% endif %}
 
